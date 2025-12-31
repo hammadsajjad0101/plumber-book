@@ -1,13 +1,12 @@
 'use client';
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from '../components/Header';
 
 export default function PlumbersBrowse() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [selectedRating, setSelectedRating] = useState('all');
   const [sortBy, setSortBy] = useState('rating');
 
@@ -17,7 +16,7 @@ export default function PlumbersBrowse() {
   const [locationError, setLocationError] = useState('');
   const [maxDistance, setMaxDistance] = useState(50); // miles
 
-  // Extended plumber data with GPS coordinates
+  // Extended plumber data with GPS coordinates and services (from their dashboard)
   const allPlumbers = [
     {
       id: 1,
@@ -25,7 +24,7 @@ export default function PlumbersBrowse() {
       rating: 4.9,
       reviewCount: 127,
       specialties: ["Emergency Repairs", "Leak Detection", "Pipe Installation"],
-      priceRange: "$$",
+      startingPrice: 59,
       responseTime: "< 30 min",
       yearsExperience: 15,
       image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face",
@@ -33,7 +32,7 @@ export default function PlumbersBrowse() {
       location: "Downtown, City Center",
       completedJobs: 450,
       category: "emergency",
-      lat: 40.7589, // NYC coordinates (sample)
+      lat: 40.7589,
       lng: -73.9851
     },
     {
@@ -42,7 +41,7 @@ export default function PlumbersBrowse() {
       rating: 4.8,
       reviewCount: 98,
       specialties: ["Bathroom Remodeling", "Water Heaters", "Fixtures"],
-      priceRange: "$$$",
+      startingPrice: 89,
       responseTime: "< 1 hr",
       yearsExperience: 12,
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
@@ -59,7 +58,7 @@ export default function PlumbersBrowse() {
       rating: 5.0,
       reviewCount: 203,
       specialties: ["Commercial Plumbing", "Drain Cleaning", "Inspection"],
-      priceRange: "$$",
+      startingPrice: 69,
       responseTime: "< 15 min",
       yearsExperience: 20,
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
@@ -76,7 +75,7 @@ export default function PlumbersBrowse() {
       rating: 4.7,
       reviewCount: 85,
       specialties: ["Residential Service", "Faucet Repair", "Toilet Installation"],
-      priceRange: "$",
+      startingPrice: 49,
       responseTime: "< 45 min",
       yearsExperience: 8,
       image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face",
@@ -93,7 +92,7 @@ export default function PlumbersBrowse() {
       rating: 4.9,
       reviewCount: 156,
       specialties: ["Emergency 24/7", "Sewer Line", "Gas Line"],
-      priceRange: "$$$",
+      startingPrice: 129,
       responseTime: "< 20 min",
       yearsExperience: 18,
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
@@ -110,7 +109,7 @@ export default function PlumbersBrowse() {
       rating: 4.8,
       reviewCount: 112,
       specialties: ["Kitchen Plumbing", "Dishwasher Install", "Water Filtration"],
-      priceRange: "$$",
+      startingPrice: 79,
       responseTime: "< 40 min",
       yearsExperience: 10,
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face",
@@ -127,7 +126,7 @@ export default function PlumbersBrowse() {
       rating: 4.6,
       reviewCount: 73,
       specialties: ["Water Heater Replacement", "Tankless Systems", "Repairs"],
-      priceRange: "$",
+      startingPrice: 59,
       responseTime: "< 2 hrs",
       yearsExperience: 7,
       image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
@@ -144,7 +143,7 @@ export default function PlumbersBrowse() {
       rating: 4.9,
       reviewCount: 145,
       specialties: ["Luxury Bathroom Design", "Spa Installations", "High-End Fixtures"],
-      priceRange: "$$$",
+      startingPrice: 149,
       responseTime: "< 1 hr",
       yearsExperience: 14,
       image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
@@ -161,7 +160,7 @@ export default function PlumbersBrowse() {
       rating: 4.7,
       reviewCount: 92,
       specialties: ["Drain Snaking", "Video Inspection", "Hydro Jetting"],
-      priceRange: "$$",
+      startingPrice: 79,
       responseTime: "< 30 min",
       yearsExperience: 11,
       image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face",
@@ -240,15 +239,13 @@ export default function PlumbersBrowse() {
 
     const matchesCategory = selectedCategory === 'all' || plumber.category === selectedCategory;
 
-    const matchesPriceRange = selectedPriceRange === 'all' || plumber.priceRange === selectedPriceRange;
-
     const matchesRating = selectedRating === 'all' ||
                           (selectedRating === '4.5+' && plumber.rating >= 4.5) ||
                           (selectedRating === '4.8+' && plumber.rating >= 4.8);
 
     const matchesDistance = !userLocation || !plumber.distance || plumber.distance <= maxDistance;
 
-    return matchesSearch && matchesCategory && matchesPriceRange && matchesRating && matchesDistance;
+    return matchesSearch && matchesCategory && matchesRating && matchesDistance;
   });
 
   // Sort plumbers
@@ -263,10 +260,6 @@ export default function PlumbersBrowse() {
         return b.reviewCount - a.reviewCount;
       case 'experience':
         return b.yearsExperience - a.yearsExperience;
-      case 'price-low':
-        return a.priceRange.length - b.priceRange.length;
-      case 'price-high':
-        return b.priceRange.length - a.priceRange.length;
       default:
         return 0;
     }
@@ -400,28 +393,20 @@ export default function PlumbersBrowse() {
                 </div>
               </div>
 
-              {/* Price Range Filter */}
+              {/* Pricing Info */}
               <div>
-                <h3 className="font-semibold text-slate-300 mb-3">Price Range</h3>
-                <div className="space-y-2">
-                  {[
-                    { id: 'all', label: 'All Prices' },
-                    { id: '$', label: '$ - Budget Friendly' },
-                    { id: '$$', label: '$$ - Moderate' },
-                    { id: '$$$', label: '$$$ - Premium' }
-                  ].map(price => (
-                    <button
-                      key={price.id}
-                      onClick={() => setSelectedPriceRange(price.id)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
-                        selectedPriceRange === price.id
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
-                      }`}
-                    >
-                      {price.label}
-                    </button>
-                  ))}
+                <h3 className="font-semibold text-slate-300 mb-3">Pricing</h3>
+                <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-2 text-green-400 font-semibold mb-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Fixed Per-Service
+                  </div>
+                  <p className="text-sm text-slate-400">All plumbers offer transparent, fixed pricing per service. No hourly surprises!</p>
+                  <div className="mt-3 text-xs text-slate-500">
+                    Starting from <span className="text-green-400 font-bold">$69</span>
+                  </div>
                 </div>
               </div>
 
@@ -453,7 +438,6 @@ export default function PlumbersBrowse() {
               <button
                 onClick={() => {
                   setSelectedCategory('all');
-                  setSelectedPriceRange('all');
                   setSelectedRating('all');
                   setSearchQuery('');
                   setUserLocation(null);
@@ -484,8 +468,6 @@ export default function PlumbersBrowse() {
                   <option value="rating">Highest Rated</option>
                   <option value="reviews">Most Reviews</option>
                   <option value="experience">Most Experience</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
                 </select>
               </div>
             </div>
@@ -567,8 +549,8 @@ export default function PlumbersBrowse() {
                       <div className="text-xs text-slate-500">Years</div>
                     </div>
                     <div className="text-center border-l border-r border-slate-700">
-                      <div className="font-bold text-slate-200">{plumber.priceRange}</div>
-                      <div className="text-xs text-slate-500">Price</div>
+                      <div className="font-bold text-green-400">${plumber.startingPrice}</div>
+                      <div className="text-xs text-slate-500">Starting</div>
                     </div>
                     <div className="text-center">
                       <div className="font-bold text-slate-200">{plumber.responseTime}</div>
@@ -603,7 +585,6 @@ export default function PlumbersBrowse() {
                 <button
                   onClick={() => {
                     setSelectedCategory('all');
-                    setSelectedPriceRange('all');
                     setSelectedRating('all');
                     setSearchQuery('');
                     setMaxDistance(50);

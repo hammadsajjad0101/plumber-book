@@ -10,7 +10,8 @@ export default function PlumberProfile() {
   const plumberId = parseInt(params.plumberId);
   const [activeTab, setActiveTab] = useState('about');
 
-  // Sample plumber data (in production, fetch from API)
+  // Sample plumber data with their own services & pricing (in production, fetch from API)
+  // Each plumber sets their own services and prices from their dashboard
   const plumbers = {
     1: {
       id: 1,
@@ -28,8 +29,15 @@ export default function PlumberProfile() {
       bio: "Licensed and insured plumber with over 15 years of experience. Specialized in emergency repairs and leak detection. Available 24/7 for urgent issues.",
       certifications: ["Master Plumber License", "Gas Line Certified", "Backflow Prevention"],
       serviceArea: "Downtown, City Center, West End (10 mile radius)",
-      hourlyRate: "$85-120/hr",
-      emergencyRate: "$150/hr",
+      // Services & prices set by this plumber from their dashboard
+      services: [
+        { id: 'emergency', name: 'Emergency Repair', price: 149, description: '24/7 urgent repairs for burst pipes, major leaks' },
+        { id: 'leak', name: 'Leak Detection & Repair', price: 89, description: 'Find and fix leaks in pipes, faucets, toilets' },
+        { id: 'pipe-repair', name: 'Pipe Repair', price: 129, description: 'Fix damaged or broken pipes' },
+        { id: 'drain', name: 'Drain Cleaning', price: 99, description: 'Clear clogged drains and pipes' },
+        { id: 'inspection', name: 'Plumbing Inspection', price: 59, description: 'Full plumbing system inspection' },
+        { id: 'other', name: 'Other Service', price: null, description: 'Custom quote based on job' }
+      ],
       photos: [
         "https://images.unsplash.com/photo-1621905252472-178fdd180f9f?w=800&h=600&fit=crop",
         "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&h=600&fit=crop",
@@ -94,8 +102,15 @@ export default function PlumberProfile() {
       bio: "Specialized in bathroom and kitchen remodeling. Known for high-quality work and attention to detail.",
       certifications: ["Licensed Plumber", "Bathroom Specialist", "Fixture Installation Expert"],
       serviceArea: "North District, East Side (15 mile radius)",
-      hourlyRate: "$95-140/hr",
-      emergencyRate: "$180/hr",
+      // Services & prices set by this plumber from their dashboard
+      services: [
+        { id: 'water-heater', name: 'Water Heater Service', price: 139, description: 'Repair or maintenance of water heaters' },
+        { id: 'water-heater-install', name: 'Water Heater Installation', price: 349, description: 'Install new water heater (parts extra)' },
+        { id: 'toilet', name: 'Toilet Repair/Install', price: 129, description: 'Fix or replace toilets' },
+        { id: 'faucet', name: 'Faucet Repair/Install', price: 89, description: 'Fix or replace faucets' },
+        { id: 'bathroom-remodel', name: 'Bathroom Plumbing Remodel', price: 499, description: 'Complete bathroom plumbing renovation' },
+        { id: 'other', name: 'Other Service', price: null, description: 'Custom quote based on job' }
+      ],
       photos: [
         "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=800&h=600&fit=crop",
         "https://images.unsplash.com/photo-1604709177225-055f99402ea3?w=800&h=600&fit=crop",
@@ -144,8 +159,15 @@ export default function PlumberProfile() {
       bio: "20 years of experience in both residential and commercial plumbing. Known for fast response times and thorough inspections.",
       certifications: ["Master Plumber", "Commercial Plumbing License", "Camera Inspection Certified"],
       serviceArea: "Entire City (commercial services available)",
-      hourlyRate: "$80-110/hr",
-      emergencyRate: "$140/hr",
+      // Services & prices set by this plumber from their dashboard
+      services: [
+        { id: 'drain', name: 'Drain Cleaning', price: 89, description: 'Clear clogged drains and pipes' },
+        { id: 'commercial-drain', name: 'Commercial Drain Service', price: 199, description: 'Heavy-duty drain cleaning for businesses' },
+        { id: 'inspection', name: 'Plumbing Inspection', price: 69, description: 'Full plumbing system inspection' },
+        { id: 'camera-inspection', name: 'Camera Pipe Inspection', price: 149, description: 'Video inspection of pipes and sewer lines' },
+        { id: 'sewer-line', name: 'Sewer Line Repair', price: 299, description: 'Repair or replace sewer lines' },
+        { id: 'other', name: 'Other Service', price: null, description: 'Custom quote based on job' }
+      ],
       photos: [
         "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=600&fit=crop",
         "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=800&h=600&fit=crop",
@@ -387,22 +409,51 @@ export default function PlumberProfile() {
           {/* Pricing Tab */}
           {activeTab === 'pricing' && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-slate-100 mb-6">Pricing Information</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="border-2 border-slate-700 rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-slate-100 mb-2">Standard Rate</h3>
-                  <div className="text-3xl font-bold text-blue-400 mb-2">{plumber.hourlyRate}</div>
-                  <p className="text-slate-400">Regular business hours (Mon-Fri, 8 AM - 6 PM)</p>
-                </div>
-                <div className="border-2 border-red-500/30 rounded-xl p-6 bg-red-500/10">
-                  <h3 className="text-xl font-bold text-slate-100 mb-2">Emergency Rate</h3>
-                  <div className="text-3xl font-bold text-red-400 mb-2">{plumber.emergencyRate}</div>
-                  <p className="text-slate-400">After hours, weekends, and emergencies</p>
-                </div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-slate-100">{plumber.name}'s Services & Pricing</h2>
+                <span className="px-4 py-2 bg-green-500/20 text-green-400 rounded-full text-sm font-semibold border border-green-500/30">
+                  Fixed Prices - No Surprises
+                </span>
               </div>
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
-                <h3 className="font-bold text-blue-400 mb-2">Payment Methods Accepted</h3>
-                <p className="text-slate-300">Cash, Credit Card, Debit Card, Venmo, Zelle</p>
+
+              {/* Services Grid */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {plumber.services?.filter(s => s.price).map(service => (
+                  <div key={service.id} className="border-2 border-slate-700 rounded-xl p-5 hover:border-blue-500/50 transition-all">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-100">{service.name}</h3>
+                        <p className="text-sm text-slate-400 mt-1">{service.description}</p>
+                      </div>
+                      <div className="text-2xl font-bold text-green-400">${service.price}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Custom Quote - only show if plumber offers "other" service */}
+              {plumber.services?.some(s => s.id === 'other') && (
+                <div className="border-2 border-yellow-500/30 rounded-xl p-6 bg-yellow-500/10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-100">Custom / Complex Jobs</h3>
+                      <p className="text-slate-400 mt-1">For larger projects or unique requirements, I'll provide a custom quote</p>
+                    </div>
+                    <span className="text-lg font-semibold text-yellow-400">Free Quote</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Additional Info */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
+                  <h3 className="font-bold text-blue-400 mb-2">Payment Methods Accepted</h3>
+                  <p className="text-slate-300">Cash, Credit Card, Debit Card, Venmo, Zelle</p>
+                </div>
+                <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                  <h3 className="font-bold text-slate-300 mb-2">Price Includes</h3>
+                  <p className="text-slate-400">Labor & standard parts. Complex parts quoted separately.</p>
+                </div>
               </div>
             </div>
           )}

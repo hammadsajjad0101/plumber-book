@@ -20,7 +20,8 @@ export default function BookingPage({ params }) {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Sample plumber data (in production, fetch from API)
+  // Sample plumber data with their own services & pricing (in production, fetch from API)
+  // Each plumber sets their own services and prices from their dashboard
   const plumbers = {
     1: {
       id: 1,
@@ -32,7 +33,15 @@ export default function BookingPage({ params }) {
       verified: true,
       location: "Downtown, City Center",
       responseTime: "< 30 min",
-      hourlyRate: "$85-120/hr"
+      // Services & prices set by this plumber from their dashboard
+      services: [
+        { id: 'emergency', name: 'Emergency Repair', price: 149, description: '24/7 urgent repairs for burst pipes, major leaks' },
+        { id: 'leak', name: 'Leak Detection & Repair', price: 89, description: 'Find and fix leaks in pipes, faucets, toilets' },
+        { id: 'pipe-repair', name: 'Pipe Repair', price: 129, description: 'Fix damaged or broken pipes' },
+        { id: 'drain', name: 'Drain Cleaning', price: 99, description: 'Clear clogged drains and pipes' },
+        { id: 'inspection', name: 'Plumbing Inspection', price: 59, description: 'Full plumbing system inspection' },
+        { id: 'other', name: 'Other Service', price: null, description: 'Custom quote based on job' }
+      ]
     },
     2: {
       id: 2,
@@ -44,7 +53,15 @@ export default function BookingPage({ params }) {
       verified: true,
       location: "North District",
       responseTime: "< 1 hr",
-      hourlyRate: "$95-140/hr"
+      // Services & prices set by this plumber from their dashboard
+      services: [
+        { id: 'water-heater', name: 'Water Heater Service', price: 139, description: 'Repair or maintenance of water heaters' },
+        { id: 'water-heater-install', name: 'Water Heater Installation', price: 349, description: 'Install new water heater (parts extra)' },
+        { id: 'toilet', name: 'Toilet Repair/Install', price: 129, description: 'Fix or replace toilets' },
+        { id: 'faucet', name: 'Faucet Repair/Install', price: 89, description: 'Fix or replace faucets' },
+        { id: 'bathroom-remodel', name: 'Bathroom Plumbing Remodel', price: 499, description: 'Complete bathroom plumbing renovation' },
+        { id: 'other', name: 'Other Service', price: null, description: 'Custom quote based on job' }
+      ]
     },
     3: {
       id: 3,
@@ -56,7 +73,15 @@ export default function BookingPage({ params }) {
       verified: true,
       location: "East Side",
       responseTime: "< 15 min",
-      hourlyRate: "$80-110/hr"
+      // Services & prices set by this plumber from their dashboard
+      services: [
+        { id: 'drain', name: 'Drain Cleaning', price: 89, description: 'Clear clogged drains and pipes' },
+        { id: 'commercial-drain', name: 'Commercial Drain Service', price: 199, description: 'Heavy-duty drain cleaning for businesses' },
+        { id: 'inspection', name: 'Plumbing Inspection', price: 69, description: 'Full plumbing system inspection' },
+        { id: 'camera-inspection', name: 'Camera Pipe Inspection', price: 149, description: 'Video inspection of pipes and sewer lines' },
+        { id: 'sewer-line', name: 'Sewer Line Repair', price: 299, description: 'Repair or replace sewer lines' },
+        { id: 'other', name: 'Other Service', price: null, description: 'Custom quote based on job' }
+      ]
     }
   };
 
@@ -118,15 +143,8 @@ export default function BookingPage({ params }) {
     '5:00 PM', '5:30 PM', '6:00 PM'
   ];
 
-  const serviceTypes = [
-    'Emergency Repair',
-    'Routine Maintenance',
-    'Installation',
-    'Inspection',
-    'Drain Cleaning',
-    'Water Heater Service',
-    'Other'
-  ];
+  // Get selected service details from plumber's services
+  const selectedService = plumber.services?.find(s => s.id === formData.serviceType);
 
   const formatPhoneNumber = (value) => {
     const phoneNumber = value.replace(/\D/g, '');
@@ -222,7 +240,11 @@ export default function BookingPage({ params }) {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Service:</span>
-                <span className="font-semibold text-slate-200">{formData.serviceType}</span>
+                <span className="font-semibold text-slate-200">{selectedService?.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Price:</span>
+                <span className="font-semibold text-green-400">{selectedService?.price ? `$${selectedService.price}` : 'Quote Pending'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Date:</span>
@@ -350,7 +372,7 @@ export default function BookingPage({ params }) {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{plumber.hourlyRate}</span>
+                  <span className="text-green-400 font-medium">Fixed Per-Service Pricing</span>
                 </div>
               </div>
             </div>
@@ -603,19 +625,43 @@ export default function BookingPage({ params }) {
             {/* Service Type */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-slate-200">
-                Service Type <span className="text-red-400">*</span>
+                Select Service <span className="text-red-400">*</span>
               </label>
-              <select
-                value={formData.serviceType}
-                onChange={(e) => setFormData({...formData, serviceType: e.target.value})}
-                required
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none appearance-none cursor-pointer"
-              >
-                <option value="">Select a service...</option>
-                {serviceTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
+              <p className="text-sm text-slate-400 mb-3">Services offered by {plumber.name}:</p>
+              <div className="space-y-2">
+                {plumber.services?.map(service => (
+                  <label
+                    key={service.id}
+                    className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all border-2 ${
+                      formData.serviceType === service.id
+                        ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-500/20'
+                        : 'bg-slate-800 border-slate-700 hover:border-slate-600'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="serviceType"
+                        value={service.id}
+                        checked={formData.serviceType === service.id}
+                        onChange={(e) => setFormData({...formData, serviceType: e.target.value})}
+                        className="w-4 h-4 text-blue-600 bg-slate-700 border-slate-600 focus:ring-blue-500"
+                      />
+                      <div>
+                        <div className="font-semibold text-slate-200">{service.name}</div>
+                        <div className="text-sm text-slate-400">{service.description}</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      {service.price ? (
+                        <span className="text-xl font-bold text-green-400">${service.price}</span>
+                      ) : (
+                        <span className="text-sm text-slate-400">Get Quote</span>
+                      )}
+                    </div>
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
 
             {/* Description */}
@@ -690,10 +736,33 @@ export default function BookingPage({ params }) {
               </div>
             </div>
 
+            {/* Price Summary */}
+            {selectedService && (
+              <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-2 border-green-500/30 rounded-xl p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-slate-400">Selected Service</div>
+                    <div className="text-lg font-bold text-slate-200">{selectedService.name}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-slate-400">Total Price</div>
+                    {selectedService.price ? (
+                      <div className="text-3xl font-bold text-green-400">${selectedService.price}</div>
+                    ) : (
+                      <div className="text-lg font-semibold text-yellow-400">Quote Pending</div>
+                    )}
+                  </div>
+                </div>
+                {selectedService.price && (
+                  <p className="text-xs text-slate-500 mt-2">* Additional parts/materials may be charged separately if needed</p>
+                )}
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !formData.serviceType}
               className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-xl hover:shadow-blue-500/50 hover:scale-[1.02] transition-all font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (
